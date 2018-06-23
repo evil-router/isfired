@@ -14,7 +14,9 @@ func main() {
 	}
 
 	confptr := flag.String("conf","conf.json", "config file location")
+	flag.Parse()
 	err := config.GetConfig(*confptr)
+
 	if err != nil {
 		log.Fatal(err)
 	}

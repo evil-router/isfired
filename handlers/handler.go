@@ -14,9 +14,26 @@ type person struct {
 	Reason string
 }
 
+type response struct {
+	Host string
+	Source string
+}
+func getRequest( r *http.Request) (response) {
+   var req response
+   if r.Header.Get( "X-Forwarded-Server" ) != "" {
+   	req.Host = r.Header.Get( "X-Forwarded-Server" )
+   	req.Source = r.Header.Get( "X-Forwarded-For" )
+   } else {
+	   req.Host = r.Host
+	   req.Source = r.RemoteAddr
+	}
+	return req
+}
+
 func Default(w http.ResponseWriter, r *http.Request) {
+	req := getRequest(r)
 	t, _ := template.ParseFiles("./tmpl/welcome.html")
-	s,err := models.GetComment(r.Host,10,0)
+	s,err := models.GetComment(req.Host,10,0)
 	if err != nil {
 		log.Print(err)
 	}
