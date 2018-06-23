@@ -6,12 +6,11 @@ import (
 )
 
 type comment struct {
-	Name   string
-	Reason string
-	Time   string
+	Name     string
+	Reason   string
+	Time     string
 	Location string
-	Status bool
-
+	Status   bool
 }
 
 type site struct {
@@ -45,20 +44,20 @@ func GetComment(site string, count int64, offset int64) ([]comment, error) {
 	}
 	rows, err := db.Query(`select  site.Name, comment.message, comment.Status,comment.time,comment.location   from comment ,site
 	where comment.FK_PK_site_ID = site.PK_site_ID  AND site.Site = ?
-	limit ? OFFSET ?;`, site,count, offset)
+	limit ? OFFSET ?;`, site, count, offset)
 	if err != nil {
 		log.Print(err)
 		return c, err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var n, m,t,l string
+		var n, m, t, l string
 		var s bool
-		err := rows.Scan(&n, &m, &s,&t,&l)
+		err := rows.Scan(&n, &m, &s, &t, &l)
 		if err != nil {
 			log.Fatal(err)
 		}
-		c = append(c, comment{n, m,t,l,s})
+		c = append(c, comment{n, m, t, l, s})
 	}
 
 	return c, nil

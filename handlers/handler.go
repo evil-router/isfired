@@ -1,13 +1,12 @@
 package handlers
 
 import (
-	"net/http"
+	"github.com/evil-router/isfired/models"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
-	"github.com/evil-router/isfired/models"
 	"log"
+	"net/http"
 )
-
 
 type person struct {
 	Name   string
@@ -15,17 +14,18 @@ type person struct {
 }
 
 type response struct {
-	Host string
+	Host   string
 	Source string
 }
-func getRequest( r *http.Request) (response) {
-   var req response
-   if r.Header.Get( "X-Forwarded-Server" ) != "" {
-   	req.Host = r.Header.Get( "X-Forwarded-Host" )
-   	req.Source = r.Header.Get( "X-Forwarded-For" )
-   } else {
-	   req.Host = r.Host
-	   req.Source = r.RemoteAddr
+
+func getRequest(r *http.Request) response {
+	var req response
+	if r.Header.Get("X-Forwarded-Server") != "" {
+		req.Host = r.Header.Get("X-Forwarded-Host")
+		req.Source = r.Header.Get("X-Forwarded-For")
+	} else {
+		req.Host = r.Host
+		req.Source = r.RemoteAddr
 	}
 	return req
 }
@@ -33,17 +33,16 @@ func getRequest( r *http.Request) (response) {
 func Default(w http.ResponseWriter, r *http.Request) {
 	req := getRequest(r)
 	t, _ := template.ParseFiles("./tmpl/welcome.html")
-	s,err := models.GetComment(req.Host,10,0)
+	s, err := models.GetComment(req.Host, 10, 0)
 	if err != nil {
 		log.Print(err)
 	}
-	err = t.Execute(w, s)   //step 2
+	err = t.Execute(w, s) //step 2
 	if err != nil {
 		log.Print(err)
 	}
 	log.Println("Req: %v", req)
 	log.Println("Getting status: %v", s)
-
 
 }
 
@@ -56,16 +55,17 @@ func Seter(w http.ResponseWriter, r *http.Request) {
 	person.Reason = param.Get("key")
 	t.Execute(w, person) //step 2
 }
-	func History(w http.ResponseWriter, r *http.Request) {
+func History(w http.ResponseWriter, r *http.Request) {
+	req := getRequest(r)
 	t, _ := template.ParseFiles("./tmpl/history.html")
-	s,err := models.GetComment(r.Host,10,0)
+	s, err := models.GetComment(req.Host, 10, 0)
 	if err != nil {
-	log.Print(err)
+		log.Print(err)
 	}
-	err = t.Execute(w, s)   //step 2
+	err = t.Execute(w, s) //step 2
 	if err != nil {
-	log.Print(err)
+		log.Print(err)
 	}
 	log.Println("Creating a new connection: %v", s)
 
-	}
+}

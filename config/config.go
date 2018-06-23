@@ -1,22 +1,22 @@
 package config
 
 import (
-	"os"
 	"encoding/json"
 	"fmt"
+	"os"
 )
 
 type Configuration struct {
-	DB_Host  string
-	DB_User  string
-	DB_Pass  string
-	DB_Port  string
-	DB_Name  string
+	DB_Host string
+	DB_User string
+	DB_Pass string
+	DB_Port string
+	DB_Name string
 }
 
-var Config  Configuration
+var Config Configuration
 
-func GetConfig (path string) (error){
+func GetConfig(path string) error {
 	file, _ := os.Open(path)
 	defer file.Close()
 	decoder := json.NewDecoder(file)

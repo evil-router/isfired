@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"github.com/evil-router/isfired/handlers"
-	"github.com/evil-router/isfired/config"
-	"log"
 	"flag"
+	"github.com/evil-router/isfired/config"
+	"github.com/evil-router/isfired/handlers"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 		Addr: "127.0.0.1:8080",
 	}
 
-	confptr := flag.String("conf","conf.json", "config file location")
+	confptr := flag.String("conf", "conf.json", "config file location")
 	flag.Parse()
 	err := config.GetConfig(*confptr)
 

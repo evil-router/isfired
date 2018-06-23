@@ -3,15 +3,16 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/evil-router/isfired/config"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB = nil
+
 func GetDB() (*sql.DB, error) {
 	config := config.Config
 	if db == nil {
-		conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s" ,
+		conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 			config.DB_User,
 			config.DB_Pass,
 			config.DB_Host,
@@ -26,5 +27,3 @@ func GetDB() (*sql.DB, error) {
 
 	return db, nil
 }
-
-
