@@ -1,0 +1,38 @@
+
+CREATE SCHEMA Fired;
+
+create table Fired.site
+(
+  PK_site_ID bigint       not null
+    primary key,
+  Name       varchar(100) not null,
+  Site       varchar(20)  not null,
+  constraint site_PK_site_ID_uindex
+  unique (PK_site_ID),
+  constraint site_Name_uindex
+  unique (Name)
+);
+
+
+create table Fired.comment
+(
+  PK_comment_ID bigint auto_increment
+    primary key,
+  FK_PK_site_ID bigint                             null,
+  message       varchar(400)                       not null,
+  time          datetime default CURRENT_TIMESTAMP null,
+  location      varchar(30) default ''             null,
+  Status        tinyint(1) default '1'             null
+);
+
+create index comment_FK_PK_site_ID_index
+  on Fired.comment (FK_PK_site_ID);
+
+
+/*
+   FOR THE LOVE OF GOD DONT USE THIS AS IS DEAR GOD DON'T SO I AM GOING TO LEAVE IT BROKEN
+ */
+CREATE USER 'superman'@'%.example.com' IDENTIFIED BY 'USEAFUCKINGGOODPASSWORDTHATMEANSYOUGREG';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP
+         ON Fired.*
+         TO 'superman'@'%.example.com';
