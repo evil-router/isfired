@@ -41,7 +41,9 @@ func Default(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 	}
-	log.Println("Creating a new connection: %v", s)
+	log.Println("Req: %v", req)
+	log.Println("Getting status: %v", s)
+
 
 }
 
