@@ -1,6 +1,7 @@
 
 CREATE SCHEMA Fired;
 
+
 create table Fired.site
 (
   PK_site_ID bigint       not null
