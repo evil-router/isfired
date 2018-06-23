@@ -21,7 +21,7 @@ type response struct {
 func getRequest( r *http.Request) (response) {
    var req response
    if r.Header.Get( "X-Forwarded-Server" ) != "" {
-   	req.Host = r.Header.Get( "X-Forwarded-Server" )
+   	req.Host = r.Header.Get( "X-Forwarded-Host" )
    	req.Source = r.Header.Get( "X-Forwarded-For" )
    } else {
 	   req.Host = r.Host
