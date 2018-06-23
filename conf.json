@@ -1,0 +1,7 @@
+{
+  "DB_Host":  "localhost",
+  "DB_User":  "fired",
+  "DB_Pass":  "password",
+  "DB_Port":  "3306",
+  "DB_Name":  "fired"
+}

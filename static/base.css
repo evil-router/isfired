@@ -1,0 +1,18 @@
+body {
+    height: 100%;
+    background-color: #843534;
+}
+body {
+    color: #fff;
+    text-align: center;
+    text-shadow: 4px 1px 3px rgba(0,0,0,.5);
+}
+
+.grid {
+
+    display: grid;
+
+    grid-columns: auto 100px 1fr 2fr;
+    grid-rows: 50px 5em auto;
+
+}
