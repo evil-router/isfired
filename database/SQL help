@@ -4,27 +4,31 @@ CREATE SCHEMA Fired;
 
 create table Fired.site
 (
-  PK_site_ID bigint       not null
+  Site_ID bigint       not null,
+  Name    varchar(100) not null,
+  Site    varchar(40)  not null,
+  PK_ID   bigint auto_increment
     primary key,
-  Name       varchar(100) not null,
-  Site       varchar(20)  not null,
-  constraint site_PK_site_ID_uindex
-  unique (PK_site_ID),
-  constraint site_Name_uindex
-  unique (Name)
+  constraint site_Site_uindex
+  unique (Site)
 );
+
 
 
 create table Fired.comment
 (
-  PK_comment_ID bigint auto_increment
+  PK_comment_ID bigint                             not null
     primary key,
-  FK_PK_site_ID bigint                             null,
+  FK_Site_ID    bigint                             null,
   message       varchar(400)                       not null,
   time          datetime default CURRENT_TIMESTAMP null,
   location      varchar(30) default ''             null,
   Status        tinyint(1) default '1'             null
 );
+
+create index comment_FK_PK_site_ID_index
+  on Fired.comment (FK_Site_ID);
+
 
 create index comment_FK_PK_site_ID_index
   on Fired.comment (FK_PK_site_ID);

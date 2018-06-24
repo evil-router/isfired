@@ -26,7 +26,7 @@ func GetSite(name string) (site, error) {
 		log.Print(err)
 		return s, err
 	}
-	err = db.QueryRow("select PK_site_ID, Name,Site From site where PK_site_ID = ?", 1).Scan(&s.ID, &s.Name, &s.Site)
+	err = db.QueryRow("select Site_ID, Name,Site From site where PK_site_ID = ?", 1).Scan(&s.ID, &s.Name, &s.Site)
 	if err != nil {
 		log.Print(err)
 		return s, err
@@ -43,7 +43,7 @@ func GetComment(site string, count int64, offset int64) ([]comment, error) {
 		return c, err
 	}
 	rows, err := db.Query(`select  site.Name, comment.message, comment.Status,comment.time,comment.location   from comment ,site
-	where comment.FK_PK_site_ID = site.PK_site_ID  AND site.Site = ?
+	where comment.FK_Site_ID = site.Site_ID  AND site.Site = ?
 	limit ? OFFSET ?;`, site, count, offset)
 	if err != nil {
 		log.Print(err)
