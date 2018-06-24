@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/", handlers.Default)
 	http.HandleFunc("/set", handlers.Seter)
 	http.HandleFunc("/history", handlers.History)
+	http.HandleFunc("/add", handlers.AddSite)
 
 	server.ListenAndServe()
 }

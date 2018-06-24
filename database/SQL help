@@ -1,38 +1,32 @@
 
 CREATE SCHEMA Fired;
-
-
-create table Fired.site
+use Fired;
+create table comment
 (
-  Site_ID bigint       not null,
-  Name    varchar(100) not null,
-  Site    varchar(40)  not null,
-  PK_ID   bigint auto_increment
+  PK_comment_ID bigint auto_increment
+    primary key,
+  FK_Site_ID varchar(255) null,
+  message varchar(400) not null,
+  time datetime default CURRENT_TIMESTAMP null,
+  location varchar(30) default '' null,
+  Status tinyint(1) default '1' null
+)
+;
+
+create index comment_FK_PK_site_ID_index
+  on comment (FK_Site_ID)
+;
+
+create table site
+(
+  Site_ID varchar(255) not null,
+  Name varchar(100) not null,
+  Site varchar(40) not null,
+  PK_ID bigint auto_increment
     primary key,
   constraint site_Site_uindex
   unique (Site)
-);
-
-
-
-create table Fired.comment
-(
-  PK_comment_ID bigint                             not null
-    primary key,
-  FK_Site_ID    bigint                             null,
-  message       varchar(400)                       not null,
-  time          datetime default CURRENT_TIMESTAMP null,
-  location      varchar(30) default ''             null,
-  Status        tinyint(1) default '1'             null
-);
-
-create index comment_FK_PK_site_ID_index
-  on Fired.comment (FK_Site_ID);
-
-
-create index comment_FK_PK_site_ID_index
-  on Fired.comment (FK_PK_site_ID);
-
+)
 
 /*
    FOR THE LOVE OF GOD DONT USE THIS AS IS DEAR GOD DON'T SO I AM GOING TO LEAVE IT BROKEN

@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/evil-router/isfired/database"
 	"log"
+	uuid2 "github.com/satori/go.uuid"
 )
 
 type comment struct {
@@ -14,23 +15,23 @@ type comment struct {
 }
 
 type site struct {
-	ID   int64
+	ID   string
 	Name string
 	Site string
 }
 
-func GetSite(name string) (int64, error) {
-	var id int64
+func GetSite(name string) (string, error) {
+	var id string
 	log.Printf("get site %v", name)
 	db, err := database.GetDB()
 	if err != nil {
 		log.Print(err)
-		return 0, err
+		return "", err
 	}
-	err = db.QueryRow("select Site_ID  From site where Site = ?", name).Scan(&id)
+	err = db.QueryRow("select site.Site_ID  From site where Site = ?", name).Scan(&id)
 	if err != nil {
 		log.Print(err)
-		return 0, err
+		return "", err
 	}
 
 
@@ -80,10 +81,57 @@ func SetComment(site string, comment string,city string, status bool,) ( error) 
 
 	rows, err := db.Query("INSERT INTO `Fired`.`comment` (`FK_Site_ID`, `message`, `time`, `location`, `Status`)"+
 		"VALUES (?, ?, DEFAULT, ? , ?)", id,comment,city ,status)
+	defer rows.Close()
 	if err != nil {
 		log.Print(err)
 		return  err
 	}
+
+	return  nil
+}
+
+
+func GetActiveSites() ([]site, error) {
+	var sites [] site
+	db, err := database.GetDB()
+	if err != nil {
+		log.Print(err)
+		return  sites , err
+	}
+	rows,err := db.Query("Select Site,Name,PK_ID from site")
 	defer rows.Close()
+	if err != nil {
+		log.Print(err)
+		return sites, err
+	}
+	for rows.Next() {
+		var s,n,i string
+		err := rows.Scan(&s, &n, &i)
+		if err != nil {
+			log.Fatal(err)
+		}
+		sites = append(sites, site{i,n,s})
+	}
+
+
+	return sites, nil
+}
+
+func AddSite(site,name string) ( error) {
+	db, err := database.GetDB()
+	if err != nil {
+		log.Print(err)
+		return  err
+	}
+	uuid,_:= uuid2.NewV4()
+	rows, err := db.Query("INSERT INTO `Fired`.`site` (`Site_ID`, `Name`, `Site`, `PK_ID`)"+
+		"VALUES (?, ?, ? , DEFAULT)", uuid.String(),name,site)
+	defer rows.Close()
+	if err != nil {
+		log.Printf("Site Add %v", err)
+		return  err
+	}
+	SetComment(site,"Welcome","creation",false)
+
 	return  nil
 }

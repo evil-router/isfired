@@ -28,8 +28,14 @@ body {
     background-color: #c228eb;
     border: #5e5e5e 4px;
 }
-.row {
+.rows1 {
     border: #5e5e5e 10px;
+    background-color: #7f7f7f  ;
+
+}
+.rows0 {
+    border: #5e5e5e 10px;
+    background-color: #858585;
 
 }
 

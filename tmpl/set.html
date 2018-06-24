@@ -11,17 +11,44 @@
 {{$current := index . 0 }}
     <title>Is {{$current.Name}} Fired?</title>
 </head>
-<h1> {{$current.Name}}
-{{- if $current.Status}}
-        is Fired!!!
-{{- else }}
-        is not fired!
-
-{{- end}}
+<h1> Update {{$current.Name}} Employment
 </h1>
-<h2>{{$current.Reason}}</h2>
-<h3>from: {{ $current.Location}}</h3>
-<h3>At:{{ $current.Time}}</h3>
+
+
+
+
+<form id="contact-form" method="post" action="/set" role="form">
+
+    <div class="messages"></div>
+
+    <div class="controls">
+        <div class="row">
+            <div class="col-md-4 mx-auto">
+                <div class="form-group">
+                    <label for="form_message">Comment</label>
+                    <textarea id="form_message" name="comment" class="form-control" placeholder="Message for {{$current.Name}} *" rows="4" required="required" data-error="A Message is Requred"></textarea>
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+        </div>
+         <div class="row">
+             <div class="col-md-4 mx-auto">
+             <div class="form-check">
+                 <input type="checkbox" name="status" class="form-check-input" id="exampleCheck1">
+                 <label class="form-check-label"  for="exampleCheck1">Fire?</label>
+             </div>
+             </div>
+         </div>
+            <div class="col-md-12">
+                <input type="submit" class="btn btn-success btn-send" value="Send message">
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+            </div>
+        </div>
+    </div>
+
+</form>
 
 
 
@@ -41,7 +68,7 @@
             </div>
             <div class="col-md-3 button even">
                 <a href="/set">
-                    Update
+                Update
                 </a>
             </div>
             <div class="col-md-3 button odd">

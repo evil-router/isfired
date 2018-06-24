@@ -6,17 +6,12 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 	"github.com/oschwald/geoip2-golang"
 	"net"
 
 	"strings"
+	"regexp"
 )
-
-type person struct {
-	Name   string
-	Reason string
-}
 
 type response struct {
 	Host   string
@@ -52,7 +47,7 @@ func getRequest(r *http.Request) response {
 func Default(w http.ResponseWriter, r *http.Request) {
 	req := getRequest(r)
 	t, _ := template.ParseFiles("./tmpl/welcome.html")
-	s, err := models.GetComment(req.Host, 10, 0)
+	s, err := models.GetComment(req.Host, 1, 0)
 	if err != nil {
 		log.Print(err)
 	}
@@ -66,24 +61,34 @@ func Default(w http.ResponseWriter, r *http.Request) {
 }
 
 func Seter(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("./tmpl/set.html")
+	fired := false
 	req := getRequest(r)
-
-	param := r.URL.Query()
-	comment := bluemonday.UGCPolicy().Sanitize(param.Get("comment"))
-	status,err := strconv.ParseBool(param.Get("status"))
-	if err != nil{
-		status = false
+	r.ParseForm()
+	comment := bluemonday.UGCPolicy().Sanitize(r.Form.Get("comment") )
+	status := r.Form.Get("status")
+	if status == "on"{
+		fired = true
 	}
+	log.Printf("form data %v ",r.Form.Encode() )
 	//key := param.Get("key")
-
-	models.SetComment(req.Host,comment,req.City,status)
-
-	Default(w,r)
+	if len(comment)  >0 {
+		models.SetComment(req.Host, comment, req.City, fired)
+		Default(w,r)
+		return
+	}
+	s, err := models.GetComment(req.Host, 10, 0)
+	err = t.Execute(w, s) //step 2
+	if err != nil {
+		log.Print(err)
+	}
+	log.Println("Req: %v", req)
+	log.Println("Getting status: %v", s)
 }
 func History(w http.ResponseWriter, r *http.Request) {
 	req := getRequest(r)
 	t, _ := template.ParseFiles("./tmpl/history.html")
-	s, err := models.GetComment(req.Host, 10, 0)
+	s, err := models.GetComment(req.Host, 1000, 0)
 	if err != nil {
 		log.Print(err)
 	}
@@ -91,6 +96,28 @@ func History(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 	}
-	log.Println("Creating a new connection: %v", s)
 
+}
+
+func AddSite(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("./tmpl/add.html")
+	r.ParseForm()
+	name := r.PostForm.Get("name")
+	if len(name) >0 {
+		log.Printf("name: %v", name)
+		reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+		if err != nil {
+			log.Print(err)
+		}
+		site := reg.ReplaceAllString(name,"") + ".isfired.com"
+		models.AddSite(site,name)
+		http.Redirect(w,r,"http://" + site , 302)
+	}
+
+	s,_ := models.GetActiveSites()
+	log.Printf("sites %v ",s)
+	err := t.Execute(w,s) //step 2
+	if err != nil {
+		log.Print(err)
+	}
 }
