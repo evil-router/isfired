@@ -14,14 +14,14 @@
 <h1> {{$current.Name}}
 {{- if $current.Status}}
         is Fired!!!
-{{- else -}}
+{{- else }}
         is not fired!
 
 {{- end}}
 </h1>
 <h2>{{$current.Reason}}</h2>
-<h3>from: {{- $current.Location}}</h3>
-<h3>At:{{- $current.Time}}</h3>
+<h3>from: {{ $current.Location}}</h3>
+<h3>At:{{ $current.Time}}</h3>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

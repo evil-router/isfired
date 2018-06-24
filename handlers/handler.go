@@ -6,6 +6,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
+	"github.com/oschwald/geoip2-golang"
+	"net"
+
 )
 
 type person struct {
@@ -16,6 +20,7 @@ type person struct {
 type response struct {
 	Host   string
 	Source string
+	City   string
 }
 
 func getRequest(r *http.Request) response {
@@ -27,6 +32,18 @@ func getRequest(r *http.Request) response {
 		req.Host = r.Host
 		req.Source = r.RemoteAddr
 	}
+	db, err := geoip2.Open("GeoLite2/GeoLite2-City.mmdb")
+	if err != nil {
+		log.Print(err)
+	}
+	log.Printf(" city %v", req.Source)
+	ip := net.ParseIP(req.Source)
+	res, err := db.City(ip)
+	if err != nil {
+		log.Print(err)
+	}
+	log.Printf(" city %v", res.City.Names)
+	req.City = res.City.Names["en"]
 	return req
 }
 
@@ -47,13 +64,19 @@ func Default(w http.ResponseWriter, r *http.Request) {
 }
 
 func Seter(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("./welcome.html")
-	param := r.URL.Query()
+	req := getRequest(r)
 
-	person := new(person)
-	person.Name = bluemonday.UGCPolicy().Sanitize(param.Get("foo"))
-	person.Reason = param.Get("key")
-	t.Execute(w, person) //step 2
+	param := r.URL.Query()
+	comment := bluemonday.UGCPolicy().Sanitize(param.Get("comment"))
+	status,err := strconv.ParseBool(param.Get("status"))
+	if err != nil{
+		status = false
+	}
+	//key := param.Get("key")
+
+	models.SetComment(req.Host,comment,req.City,status)
+
+	Default(w,r)
 }
 func History(w http.ResponseWriter, r *http.Request) {
 	req := getRequest(r)
