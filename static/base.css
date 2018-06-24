@@ -16,3 +16,32 @@ body {
     grid-rows: 50px 5em auto;
 
 }
+
+.even {
+    color: blue;
+    background-color: #eb6437 ;
+    border: #5e5e5e 4px;
+}
+
+.odd {
+    color: green;
+    background-color: #c228eb;
+    border: #5e5e5e 4px;
+}
+.row {
+    border: #5e5e5e 10px;
+
+}
+
+.button {
+     /*background-color: #4CAF50; /* Green */
+     border: none;
+     color: white;
+     padding: 15px 32px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 16px;
+ }
+
+
