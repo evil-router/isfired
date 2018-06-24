@@ -10,6 +10,7 @@ import (
 	"github.com/oschwald/geoip2-golang"
 	"net"
 
+	"strings"
 )
 
 type person struct {
@@ -27,10 +28,11 @@ func getRequest(r *http.Request) response {
 	var req response
 	if r.Header.Get("X-Forwarded-Server") != "" {
 		req.Host = r.Header.Get("X-Forwarded-Host")
-		req.Source = r.Header.Get("X-Forwarded-For")
+		list := r.Header.Get("X-Forwarded-For")
+		req.Source = strings.Split(list,",")[0]
 	} else {
 		req.Host = r.Host
-		req.Source = r.RemoteAddr
+		req.Source,_,_ = net.SplitHostPort(r.RemoteAddr)
 	}
 	db, err := geoip2.Open("GeoLite2/GeoLite2-City.mmdb")
 	if err != nil {
