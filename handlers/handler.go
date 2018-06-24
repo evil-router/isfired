@@ -3,14 +3,14 @@ package handlers
 import (
 	"github.com/evil-router/isfired/models"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/oschwald/geoip2-golang"
 	"html/template"
 	"log"
-	"net/http"
-	"github.com/oschwald/geoip2-golang"
 	"net"
+	"net/http"
 
-	"strings"
 	"regexp"
+	"strings"
 )
 
 type response struct {
@@ -24,10 +24,10 @@ func getRequest(r *http.Request) response {
 	if r.Header.Get("X-Forwarded-Server") != "" {
 		req.Host = r.Header.Get("X-Forwarded-Host")
 		list := r.Header.Get("X-Forwarded-For")
-		req.Source = strings.Split(list,",")[0]
+		req.Source = strings.Split(list, ",")[0]
 	} else {
 		req.Host = r.Host
-		req.Source,_,_ = net.SplitHostPort(r.RemoteAddr)
+		req.Source, _, _ = net.SplitHostPort(r.RemoteAddr)
 	}
 	db, err := geoip2.Open("GeoLite2/GeoLite2-City.mmdb")
 	if err != nil {
@@ -65,16 +65,16 @@ func Seter(w http.ResponseWriter, r *http.Request) {
 	fired := false
 	req := getRequest(r)
 	r.ParseForm()
-	comment := bluemonday.UGCPolicy().Sanitize(r.Form.Get("comment") )
+	comment := bluemonday.UGCPolicy().Sanitize(r.Form.Get("comment"))
 	status := r.Form.Get("status")
-	if status == "on"{
+	if status == "on" {
 		fired = true
 	}
-	log.Printf("form data %v ",r.Form.Encode() )
+	log.Printf("form data %v ", r.Form.Encode())
 	//key := param.Get("key")
-	if len(comment)  >0 {
+	if len(comment) > 0 {
 		models.SetComment(req.Host, comment, req.City, fired)
-		Default(w,r)
+		Default(w, r)
 		return
 	}
 	s, err := models.GetComment(req.Host, 10, 0)
@@ -103,20 +103,20 @@ func AddSite(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("./tmpl/add.html")
 	r.ParseForm()
 	name := r.PostForm.Get("name")
-	if len(name) >0 {
+	if len(name) > 0 {
 		log.Printf("name: %v", name)
 		reg, err := regexp.Compile("[^a-zA-Z0-9]+")
 		if err != nil {
 			log.Print(err)
 		}
-		site := reg.ReplaceAllString(name,"") + ".isfired.com"
-		models.AddSite(site,name)
-		http.Redirect(w,r,"http://" + site , 302)
+		site := reg.ReplaceAllString(name, "") + ".isfired.com"
+		models.AddSite(site, name)
+		http.Redirect(w, r, "http://"+site, 302)
 	}
 
-	s,_ := models.GetActiveSites()
-	log.Printf("sites %v ",s)
-	err := t.Execute(w,s) //step 2
+	s, _ := models.GetActiveSites()
+	log.Printf("sites %v ", s)
+	err := t.Execute(w, s) //step 2
 	if err != nil {
 		log.Print(err)
 	}

@@ -2,8 +2,8 @@ package models
 
 import (
 	"github.com/evil-router/isfired/database"
-	"log"
 	uuid2 "github.com/satori/go.uuid"
+	"log"
 )
 
 type comment struct {
@@ -33,7 +33,6 @@ func GetSite(name string) (string, error) {
 		log.Print(err)
 		return "", err
 	}
-
 
 	return id, nil
 }
@@ -67,71 +66,69 @@ func GetComment(site string, count int64, offset int64) ([]comment, error) {
 	return c, nil
 }
 
-func SetComment(site string, comment string,city string, status bool,) ( error) {
+func SetComment(site string, comment string, city string, status bool) error {
 	db, err := database.GetDB()
 	if err != nil {
 		log.Print(err)
-		return  err
+		return err
 	}
-	id,err :=GetSite(site)
+	id, err := GetSite(site)
 	if err != nil {
 		log.Print(err)
-		return  err
+		return err
 	}
 
 	rows, err := db.Query("INSERT INTO `Fired`.`comment` (`FK_Site_ID`, `message`, `time`, `location`, `Status`)"+
-		"VALUES (?, ?, DEFAULT, ? , ?)", id,comment,city ,status)
+		"VALUES (?, ?, DEFAULT, ? , ?)", id, comment, city, status)
 	defer rows.Close()
 	if err != nil {
 		log.Print(err)
-		return  err
+		return err
 	}
 
-	return  nil
+	return nil
 }
 
-
 func GetActiveSites() ([]site, error) {
-	var sites [] site
+	var sites []site
 	db, err := database.GetDB()
 	if err != nil {
 		log.Print(err)
-		return  sites , err
+		return sites, err
 	}
-	rows,err := db.Query("Select Site,Name,PK_ID from site")
+	rows, err := db.Query("Select Site,Name,PK_ID from site")
 	defer rows.Close()
 	if err != nil {
 		log.Print(err)
 		return sites, err
 	}
 	for rows.Next() {
-		var s,n,i string
+		var s, n, i string
 		err := rows.Scan(&s, &n, &i)
 		if err != nil {
 			log.Fatal(err)
 		}
-		sites = append(sites, site{i,n,s})
+		sites = append(sites, site{i, n, s})
 	}
-
 
 	return sites, nil
 }
 
-func AddSite(site,name string) ( error) {
+func AddSite(site, name string) error {
 	db, err := database.GetDB()
 	if err != nil {
 		log.Print(err)
-		return  err
+		return err
 	}
-	uuid,_:= uuid2.NewV4()
+	uuid, _ := uuid2.NewV4()
 	rows, err := db.Query("INSERT INTO `Fired`.`site` (`Site_ID`, `Name`, `Site`, `PK_ID`)"+
-		"VALUES (?, ?, ? , DEFAULT)", uuid.String(),name,site)
+		"VALUES (?, ?, ? , DEFAULT)", uuid.String(), name, site)
 	defer rows.Close()
 	if err != nil {
 		log.Printf("Site Add %v", err)
-		return  err
+		return err
 	}
-	SetComment(site,"Welcome","creation",false)
+	SetComment(site, "Welcome", "creation", false)
 
-	return  nil
+	return nil
 }
