@@ -75,14 +75,16 @@ func SetComment(site string, comment string, city string, status bool) error {
 		log.Print(err)
 		return err
 	}
+	site,_ = idna.ToASCII(site)
 	id, err := GetSite(site)
 	if err != nil {
 		log.Print(err)
 		return err
 	}
+	comment,_= idna.ToASCII(comment)
 
 	rows, err := db.Query("INSERT INTO `Fired`.`comment` (`FK_Site_ID`, `message`, `time`, `location`, `Status`)"+
-		"VALUES (?, ?, DEFAULT, ? , ?)", id, idna.ToASCII(comment), city, status)
+		"VALUES (?, ?, DEFAULT, ? , ?)", id, comment, city, status)
 	defer rows.Close()
 	if err != nil {
 		log.Print(err)
