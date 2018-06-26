@@ -105,7 +105,7 @@ func AddSite(w http.ResponseWriter, r *http.Request) {
 	name := r.PostForm.Get("name")
 	if len(name) > 0 {
 		log.Printf("name: %v", name)
-		reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+		reg, err := regexp.Compile("[^a-zA-Z0-9_-]+")
 		if err != nil {
 			log.Print(err)
 		}
