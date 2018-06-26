@@ -11,6 +11,7 @@ import (
 
 	"regexp"
 	"strings"
+	"golang.org/x/net/idna"
 )
 
 type response struct {
@@ -102,10 +103,15 @@ func History(w http.ResponseWriter, r *http.Request) {
 func AddSite(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("./tmpl/add.html")
 	r.ParseForm()
+
 	name := r.PostForm.Get("name")
 	if len(name) > 0 {
 		log.Printf("name: %v", name)
 		reg, err := regexp.Compile("[^a-zA-Z0-9_-]+")
+		if err != nil {
+			log.Print(err)
+		}
+		name,_ = idna.ToASCII(name)
 		if err != nil {
 			log.Print(err)
 		}

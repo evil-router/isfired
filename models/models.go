@@ -4,6 +4,7 @@ import (
 	"github.com/evil-router/isfired/database"
 	uuid2 "github.com/satori/go.uuid"
 	"log"
+	"golang.org/x/net/idna"
 )
 
 type comment struct {
@@ -60,6 +61,8 @@ func GetComment(site string, count int64, offset int64) ([]comment, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		n, _= idna.ToUnicode(n)
+		m, _ = idna.ToUnicode(m)
 		c = append(c, comment{n, m, t, l, s})
 	}
 
@@ -79,7 +82,7 @@ func SetComment(site string, comment string, city string, status bool) error {
 	}
 
 	rows, err := db.Query("INSERT INTO `Fired`.`comment` (`FK_Site_ID`, `message`, `time`, `location`, `Status`)"+
-		"VALUES (?, ?, DEFAULT, ? , ?)", id, comment, city, status)
+		"VALUES (?, ?, DEFAULT, ? , ?)", id, idna.ToASCII(comment), city, status)
 	defer rows.Close()
 	if err != nil {
 		log.Print(err)
