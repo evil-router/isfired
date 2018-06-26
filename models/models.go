@@ -113,6 +113,8 @@ func GetActiveSites() ([]site, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		n,_ = idna.ToUnicode(n)
+		s,_= idna.ToUnicode(s)
 		sites = append(sites, site{i, n, s})
 	}
 
@@ -133,7 +135,7 @@ func AddSite(site, name string) error {
 		log.Printf("Site Add %v", err)
 		return err
 	}
-	SetComment(site, "Welcome", "creation", false)
+	SetComment(site, "Welcome", "xn--no8h", false)
 
 	return nil
 }
